@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lux Chat AI</title>
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/4712/4712105.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #eef2f3, #cfd9df);
+      font-family: 'Inter', sans-serif;
+    }
+
+    nav {
+      background: #4f46e5;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 30px;
+      font-size: 16px;
+    }
+
+    nav .logo {
+      font-weight: 600;
+      font-size: 20px;
+    }
+
+    nav .tabs a {
+      color: white;
+      margin-left: 20px;
+      text-decoration: none;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .tab-content {
+      display: none;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .chat-container {
+      max-width: 450px;
+      margin: 50px auto;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .chat-container.active {
+      display: flex;
+    }
+
+    .chat-header {
+      background: #4f46e5;
+      color: white;
+      padding: 20px;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .chat-body {
+      flex: 1;
+      padding: 20px;
+      background: #f7f8fa;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .message {
+      max-width: 80%;
+      padding: 12px 16px;
+      border-radius: 18px;
+      font-size: 14px;
+      line-height: 1.4;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .user-message {
+      background: #4f46e5;
+      color: white;
+      align-self: flex-end;
+      border-bottom-right-radius: 0;
+    }
+
+    .bot-message {
+      background: #e0e0e0;
+      color: #333;
+      align-self: flex-start;
+      border-bottom-left-radius: 0;
+    }
+
+    .chat-footer {
+      display: flex;
+      padding: 16px;
+      border-top: 1px solid #eee;
+      background: white;
+    }
+
+    .chat-footer input {
+      flex: 1;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 14px;
+    }
+
+    .chat-footer button {
+      margin-left: 10px;
+      padding: 12px 16px;
+      background: #4f46e5;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.2s ease;
+    }
+
+    .chat-footer button:hover {
+      background: #3730a3;
+    }
+
+    footer {
+      text-align: center;
+      margin: 40px 0 20px;
+      color: #555;
+      font-size: 14px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="logo">Lux Chat AI</div>
+    <div class="tabs">
+      <a onclick="showTab('chat')">Chat</a>
+      <a onclick="showTab('about')">About</a>
+      <a onclick="showTab('support')">Support</a>
+    </div>
+  </nav>
+
+  <div id="chat" class="chat-container active">
+    <div class="chat-header">Welcome to Lux Chat</div>
+    <div class="chat-body" id="chat-body"></div>
+    <div class="chat-footer">
+      <input type="text" id="userInput" placeholder="Ask something smart..." onkeypress="handleKeyPress(event)" />
+      <button onclick="handleSend()">Send</button>
+    </div>
+  </div>
+
+  <div id="about" class="tab-content">
+    <h2>About Lux Chat AI</h2>
+    <p>Lux Chat AI is a sleek, intelligent assistant built to help you with anything. It's powered by custom logic, soon to be upgraded with advanced AI capabilities.</p>
+    <p><a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank">More about us</a></p>
+  </div>
+
+  <div id="support" class="tab-content">
+    <h2>Support</h2>
+    <p>If you need help or have questions, email us at <a href="mailto: Fackemail@gmail.com">Fackemail@gmail.com</a>.</p>
+  </div>
+
+  <footer>
+    <p>Signed with elegance by Myself</p>
+  </footer>
+
+  <script>
+    const chatBody = document.getElementById('chat-body');
+
+    function addMessage(content, type) {
+      const msg = document.createElement('div');
+      msg.className = `message ${type}-message`;
+      msg.textContent = content;
+      chatBody.appendChild(msg);
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    function getBotResponse(input) {
+      const text = input.toLowerCase();
+      if (text.includes("hello") || text.includes("hi")) return "Hello! How can I help you today?";
+      if (text.includes("help")) return "Sure! You can ask me anything about our services.";
+      if (text.includes("price")) return "Our plans start at $9/month. Need more details?";
+      if (text.includes("bye")) return "Goodbye! Come back anytime.";
+      return "Hmm, I'm not sure how to answer that yet.";
+    }
+
+    function handleSend() {
+      const input = document.getElementById('userInput');
+      const userText = input.value.trim();
+      if (!userText) return;
+      addMessage(userText, 'user');
+      const botReply = getBotResponse(userText);
+      setTimeout(() => addMessage(botReply, 'bot'), 500);
+      input.value = '';
+    }
+
+    function handleKeyPress(event) {
+      if (event.key === "Enter") handleSend();
+    }
+
+    function showTab(id) {
+      const sections = ['chat', 'about', 'support'];
+      sections.forEach(section => {
+        document.getElementById(section).classList.remove('active');
+      });
+      document.getElementById(id).classList.add('active');
+    }
+  </script>
+</body>
+</html>
